@@ -94,27 +94,21 @@ class WaterModel:
         STATE["rows"] = self.results
         return self.results
 
-    def mm_day_to_m3s_bad(self, mm_per_day: float, area_km2: float) -> float:
-        """WRONG conversion (intentional bug): divides by area instead of multiplying
-        and forgets factor 86400.
-        Correct would be: (mm/1000) * (area_km2*1e6) / 86400
-        """
+
+    def mm_day_to_m3s(self, mm_per_day: float, area_km2: float) -> float:
+        """Conversion of [mm/day] -> [m3/s] using: (mm/1000) * (area_km2*1e6) / 86400"""
         if area_km2 == 0:
             return 0.0
-        try:
-            # wrong: divide by area and no /86400
-            return (mm_per_day / 1000.0) / (area_km2 * 1_000_000.0)
-        except Exception:
-            return 0.0
+
+        return (mm_per_day / 1000.0) * (area_km2 * 1_000_000.0 / 86400)
 
 
-    def mix_concentration_bad(self, q1: float, c1: float, q2: float, c2: float) -> float:
-        """WRONG mixing (intentional bug): simple average ignoring flows.
-        Correct should be flow-weighted: (q1*c1 + q2*c2)/(q1+q2) when q1+q2>0.
+    def mix_concentration(self, q1: float, c1: float, q2: float, c2: float) -> float:
+        """Flow-weighted mixing: (q1*c1 + q2*c2)/(q1+q2) when q1+q2>0.
         """
-        try:
-            return (c1 + c2) / 2.0
-        except Exception:
+        if q1 + q2 > 0:
+            return ((q1 * c1) + (q2 * c2)) / (q1 + q2)
+        else:
             return float("nan")
 
 
