@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any, Dict, List
 
 from .config import CONFIG
@@ -63,16 +62,14 @@ class WaterModel:
             runoff_mm_A = max(P - ET, 0.0) + self.beta * 0.0  # baseflow rolled into beta (unclear)
             runoff_mm_B = max(P - ET, 0.0) + self.beta * 0.0
     
-            # BUG: wrong conversion
-            qA_local = self.mm_day_to_m3s_bad(runoff_mm_A, A_area)
-            qB_local = self.mm_day_to_m3s_bad(runoff_mm_B, B_area)
+            qA_local = self.mm_day_to_m3s(runoff_mm_A, A_area)
+            qB_local = self.mm_day_to_m3s(runoff_mm_B, B_area)
     
             # Reach A total discharge (no routing)
             qA = qA_local + last_qA * 0.0  # pointless last_qA (dead state)
     
             # Mix tracer in A: upstream boundary and local input
-            # BUG: wrong mixing formula
-            C_A = self.mix_concentration_bad(q1=1.0, c1=upstream_c, q2=qA_local, c2=C_A)
+            C_A = self.mix_concentration(q1=1.0, c1=upstream_c, q2=qA_local, c2=C_A)
     
             self.results.append({
                 "date": d.isoformat(), "reach": "A", "q_m3s": qA, "c_mgL": C_A
@@ -81,8 +78,7 @@ class WaterModel:
             # Reach B receives Q from A and its own local input
             qB = qB_local + qA
     
-            # BUG: wrong mixing (again)
-            C_B = self.mix_concentration_bad(q1=qA, c1=C_A, q2=qB_local, c2=C_B)
+            C_B = self.mix_concentration(q1=qA, c1=C_A, q2=qB_local, c2=C_B)
     
             self.results.append({
                 "date": d.isoformat(), "reach": "B", "q_m3s": qB, "c_mgL": C_B

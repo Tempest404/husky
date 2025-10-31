@@ -6,10 +6,10 @@ Use this file to document:
 - Ideas for tests, performance, design layering, or CI enhancements.
 
 Initial plan:
-- Create WaterModel class containing core functions from the run method()
-- Create DatasetIO class containing the main read and write functions for the input data and final simulation results
-- Check where to incorporate the application configuration
-- Evaluate where the locate each class
+- Create WaterModel class containing core functions from the run method().
+- Create DatasetIO class containing the main read and write functions for the input data and final simulation results.
+- Check where to incorporate the application configuration.
+- Evaluate where to locate each class.
 
 Template
 - What I finished:
